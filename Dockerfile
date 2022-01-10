@@ -2,23 +2,26 @@
 # to allows us to choose Python versions at runtime via: python2, python3, pip2, pip3, etc.
 FROM python:3.7.1-alpine
 
-ENV GPG_KEY C01E1CAD5EA2C4F0B8E3571504C367C218ADD4FF
 ENV PYTHON_VERSION 2.7.15
 
 # if this is called "PIP_VERSION", pip explodes with "ValueError: invalid truth value '<VERSION>'"
 ENV PYTHON_PIP_VERSION 18.1
 ENV PATH="/root/bin/:${PATH}"
-ENV TERM=xterm-256color
+# ENV TERM=xterm-256color
 
 RUN set -ex
+RUN apk update
 RUN apk add --no-cache --virtual .fetch-deps \
 		gnupg \
 		openssl \
 		tar \
-		xz
-RUN wget -O python.tar.xz "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz" 
+		xz \
+		git \
+		gcc \
+		python-dev \
+		python3-dev
 
-RUN wget -O python.tar.xz.asc "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz.asc"
+RUN wget -O python.tar.xz "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz" 
 
 RUN export GNUPGHOME="$(mktemp -d)"
 
@@ -34,7 +37,6 @@ RUN set -ex \
 		xz \
 	\
 	&& wget -O python.tar.xz "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz" \
-	&& wget -O python.tar.xz.asc "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz.asc" \
 	&& export GNUPGHOME="$(mktemp -d)" \
 	&& mkdir -p /usr/src/python \
 	&& tar -xJC /usr/src/python --strip-components=1 -f python.tar.xz \
@@ -101,6 +103,7 @@ RUN apk add git
 RUN apk add gcc
 RUN apk add python-dev
 RUN apk add python3-dev
+RUN apk add musl-dev
 
 RUN pip install --upgrade pip
 

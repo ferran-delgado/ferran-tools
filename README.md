@@ -1,5 +1,7 @@
 # Python2-and-Python3-in-Docker
 
+This was initially copied from https://github.com/cclauss/Python2-and-Python3-in-Docker
+
 ## Creates a single Docker container lets you run both Python 2.7.13 and Python 3.7.1
 
 TL;DR:`$ docker build -t python-2-and-3 .`
